@@ -31,44 +31,418 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>Welcome to GitHub Pages.</h3>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+        <article class="markdown-body entry-content" itemprop="mainContentOfPage"><h1>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+
+        <h2><a name="current-status" class="anchor" href="#current-status"><span class="mini-icon mini-icon-link"></span></a>Current status</h2>
+
+<p>This module was developed for <a href="http://transloadit.com/">Transloadit</a>, a service focused on uploading
+and encoding images and videos. It has been battle-tested against hundreds of GB of file uploads from
+a large variety of clients and is considered production-ready.</p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="mini-icon mini-icon-link"></span></a>Features</h2>
+
+<ul>
+<li>Fast (~500mb/sec), non-buffering multipart parser</li>
+<li>Automatically writing file uploads to disk</li>
+<li>Low memory footprint</li>
+<li>Graceful error handling</li>
+<li>Very high test coverage</li>
+</ul><h2>
+<a name="installation" class="anchor" href="#installation"><span class="mini-icon mini-icon-link"></span></a>Installation</h2>
+
+<p>Via <a href="http://github.com/isaacs/npm">npm</a>:</p>
+
+<pre><code>npm install formidable@latest</code></pre>
+
+<p>Manually:</p>
+
+<pre><code>git clone git://github.com/felixge/node-formidable.git formidable
+vim my.js
+# var formidable = require('./formidable');
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>Note: Formidable requires <a href="http://github.com/felixge/node-gently">gently</a> to run the unit tests, but you won't need it for just using the library.</p>
 
-<h3>Designer Templates</h3>
+<h2>
+<a name="example" class="anchor" href="#example"><span class="mini-icon mini-icon-link"></span></a>Example</h2>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>Parse an incoming file upload.</p>
 
-<h3>Rather Drive Stick?</h3>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">formidable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'formidable'</span><span class="p">),</span>
+    <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'http'</span><span class="p">),</span>
+    <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'util'</span><span class="p">);</span>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">url</span> <span class="o">==</span> <span class="s1">'/upload'</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span><span class="p">.</span><span class="nx">method</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'post'</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// parse a file upload</span>
+    <span class="kd">var</span> <span class="nx">form</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">formidable</span><span class="p">.</span><span class="nx">IncomingForm</span><span class="p">();</span>
 
-<h3>Authors and Contributors</h3>
+    <span class="nx">form</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">fields</span><span class="p">,</span> <span class="nx">files</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s1">'content-type'</span><span class="o">:</span> <span class="s1">'text/plain'</span><span class="p">});</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s1">'received upload:\n\n'</span><span class="p">);</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">inspect</span><span class="p">({</span><span class="nx">fields</span><span class="o">:</span> <span class="nx">fields</span><span class="p">,</span> <span class="nx">files</span><span class="o">:</span> <span class="nx">files</span><span class="p">}));</span>
+    <span class="p">});</span>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
 
-<h3>Support or Contact</h3>
+  <span class="c1">// show a file upload form</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s1">'content-type'</span><span class="o">:</span> <span class="s1">'text/html'</span><span class="p">});</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span>
+    <span class="s1">'&lt;form action="/upload" enctype="multipart/form-data" method="post"&gt;'</span><span class="o">+</span>
+    <span class="s1">'&lt;input type="text" name="title"&gt;&lt;br&gt;'</span><span class="o">+</span>
+    <span class="s1">'&lt;input type="file" name="upload" multiple="multiple"&gt;&lt;br&gt;'</span><span class="o">+</span>
+    <span class="s1">'&lt;input type="submit" value="Upload"&gt;'</span><span class="o">+</span>
+    <span class="s1">'&lt;/form&gt;'</span>
+  <span class="p">);</span>
+<span class="p">}).</span><span class="nx">listen</span><span class="p">(</span><span class="mi">8080</span><span class="p">);</span>
+</pre></div>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<h2>
+<a name="api" class="anchor" href="#api"><span class="mini-icon mini-icon-link"></span></a>API</h2>
+
+<h3>
+<a name="formidableincomingform" class="anchor" href="#formidableincomingform"><span class="mini-icon mini-icon-link"></span></a>Formidable.IncomingForm</h3>
+
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">form</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">formidable</span><span class="p">.</span><span class="nx">IncomingForm</span><span class="p">()</span>
+</pre></div>
+
+<p>Creates a new incoming form.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">encoding</span> <span class="o">=</span> <span class="s1">'utf-8'</span><span class="p">;</span>
+</pre></div>
+
+<p>Sets encoding for incoming form fields.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">uploadDir</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TMP</span> <span class="o">||</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TMPDIR</span> <span class="o">||</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TEMP</span> <span class="o">||</span> <span class="s1">'/tmp'</span> <span class="o">||</span> <span class="nx">process</span><span class="p">.</span><span class="nx">cwd</span><span class="p">();</span>
+</pre></div>
+
+<p>The directory for placing file uploads in. You can move them later on using
+<code>fs.rename()</code>. The default directory is picked at module load time depending on
+the first existing directory from those listed above.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">keepExtensions</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</pre></div>
+
+<p>If you want the files written to <code>form.uploadDir</code> to include the extensions of the original files, set this property to <code>true</code>.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">type</span>
+</pre></div>
+
+<p>Either 'multipart' or 'urlencoded' depending on the incoming request.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">maxFieldsSize</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">;</span>
+</pre></div>
+
+<p>Limits the amount of memory a field (not file) can allocate in bytes.
+If this value is exceeded, an <code>'error'</code> event is emitted. The default
+size is 2MB.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</pre></div>
+
+<p>If you want checksums calculated for incoming files, set this to either <code>'sha1'</code> or <code>'md5'</code>.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">bytesReceived</span>
+</pre></div>
+
+<p>The amount of bytes received for this form so far.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">bytesExpected</span>
+</pre></div>
+
+<p>The expected number of bytes in this form.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="p">[</span><span class="nx">cb</span><span class="p">]);</span>
+</pre></div>
+
+<p>Parses an incoming node.js <code>request</code> containing form data. If <code>cb</code> is provided, all fields an files are collected and passed to the callback:</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">fields</span><span class="p">,</span> <span class="nx">files</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+<span class="p">});</span>
+
+<span class="nx">form</span><span class="p">.</span><span class="nx">onPart</span><span class="p">(</span><span class="nx">part</span><span class="p">);</span>
+</pre></div>
+
+<p>You may overwrite this method if you are interested in directly accessing the multipart stream. Doing so will disable any <code>'field'</code> / <code>'file'</code> events  processing which would occur otherwise, making you fully responsible for handling the processing.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">onPart</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">part</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">part</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="s1">'data'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>If you want to use formidable to only handle certain parts for you, you can do so:</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">onPart</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">part</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">part</span><span class="p">.</span><span class="nx">filename</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// let formidable handle all non-file parts</span>
+    <span class="nx">form</span><span class="p">.</span><span class="nx">handlePart</span><span class="p">(</span><span class="nx">part</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Check the code in this method for further inspiration.</p>
+
+<h3>
+<a name="formidablefile" class="anchor" href="#formidablefile"><span class="mini-icon mini-icon-link"></span></a>Formidable.File</h3>
+
+<div class="highlight"><pre><span class="nx">file</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+
+<p>The size of the uploaded file in bytes. If the file is still being uploaded (see <code>'fileBegin'</code> event), this property says how many bytes of the file have been written to disk yet.</p>
+
+<div class="highlight"><pre><span class="nx">file</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="kc">null</span>
+</pre></div>
+
+<p>The path this file is being written to. You can modify this in the <code>'fileBegin'</code> event in
+case you are unhappy with the way formidable generates a temporary path for your files.</p>
+
+<div class="highlight"><pre><span class="nx">file</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="kc">null</span>
+</pre></div>
+
+<p>The name this file had according to the uploading client.</p>
+
+<div class="highlight"><pre><span class="nx">file</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="kc">null</span>
+</pre></div>
+
+<p>The mime type of this file, according to the uploading client.</p>
+
+<div class="highlight"><pre><span class="nx">file</span><span class="p">.</span><span class="nx">lastModifiedDate</span> <span class="o">=</span> <span class="kc">null</span>
+</pre></div>
+
+<p>A date object (or <code>null</code>) containing the time this file was last written to. Mostly
+here for compatibility with the <a href="http://dev.w3.org/2006/webapi/FileAPI/">W3C File API Draft</a>.</p>
+
+<div class="highlight"><pre><span class="nx">file</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="kc">null</span>
+</pre></div>
+
+<p>If hash calculation was set, you can read the hex digest out of this var.</p>
+
+<h4>
+<a name="formidablefiletojson" class="anchor" href="#formidablefiletojson"><span class="mini-icon mini-icon-link"></span></a>Formidable.File#toJSON()</h4>
+
+<p>This method returns a JSON-representation of the file, allowing you to
+  <code>JSON.stringify()</code> the file which is useful for logging and responding
+  to requests.</p>
+
+<h3>
+<a name="events" class="anchor" href="#events"><span class="mini-icon mini-icon-link"></span></a>Events</h3>
+
+<h4>
+<a name="progress" class="anchor" href="#progress"><span class="mini-icon mini-icon-link"></span></a>'progress'</h4>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'progress'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">bytesReceived</span><span class="p">,</span> <span class="nx">bytesExpected</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>Emitted after each incoming chunk of data that has been parsed. Can be used to roll your own progress bar.</p>
+
+<h4>
+<a name="field" class="anchor" href="#field"><span class="mini-icon mini-icon-link"></span></a>'field'</h4>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'field'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="filebegin" class="anchor" href="#filebegin"><span class="mini-icon mini-icon-link"></span></a>'fileBegin'</h4>
+
+<p>Emitted whenever a field / value pair has been received.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'fileBegin'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="file" class="anchor" href="#file"><span class="mini-icon mini-icon-link"></span></a>'file'</h4>
+
+<p>Emitted whenever a new file is detected in the upload stream. Use this even if
+you want to stream the file to somewhere else while buffering the upload on
+the file system.</p>
+
+<p>Emitted whenever a field / file pair has been received. <code>file</code> is an instance of <code>File</code>.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'file'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="error" class="anchor" href="#error"><span class="mini-icon mini-icon-link"></span></a>'error'</h4>
+
+<p>Emitted when there is an error processing the incoming form. A request that experiences an error is automatically paused, you will have to manually call <code>request.resume()</code> if you want the request to continue firing <code>'data'</code> events.</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'error'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="aborted" class="anchor" href="#aborted"><span class="mini-icon mini-icon-link"></span></a>'aborted'</h4>
+
+<p>Emitted when the request was aborted by the user. Right now this can be due to a 'timeout' or 'close' event on the socket. In the future there will be a separate 'timeout' event (needs a change in the node core).</p>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'aborted'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="p">});</span>
+</pre></div>
+
+<h5>
+<a name="end" class="anchor" href="#end"><span class="mini-icon mini-icon-link"></span></a>'end'</h5>
+
+<div class="highlight"><pre><span class="nx">form</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'end'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>Emitted when the entire request has been received, and all contained files have finished flushing to disk. This is a great place for you to send your response.</p>
+
+<h2>
+<a name="changelog" class="anchor" href="#changelog"><span class="mini-icon mini-icon-link"></span></a>Changelog</h2>
+
+<h3>
+<a name="v109" class="anchor" href="#v109"><span class="mini-icon mini-icon-link"></span></a>v1.0.9</h3>
+
+<ul>
+<li>Emit progress when content length header parsed (Tim Koschützki)</li>
+<li>Fix Readme syntax due to GitHub changes (goob)</li>
+<li>Replace references to old 'sys' module in Readme with 'util' (Peter Sugihara)</li>
+</ul><h3>
+<a name="v108" class="anchor" href="#v108"><span class="mini-icon mini-icon-link"></span></a>v1.0.8</h3>
+
+<ul>
+<li>Strip potentially unsafe characters when using <code>keepExtensions: true</code>.</li>
+<li>Switch to utest / urun for testing</li>
+<li>Add travis build</li>
+</ul><h3>
+<a name="v107" class="anchor" href="#v107"><span class="mini-icon mini-icon-link"></span></a>v1.0.7</h3>
+
+<ul>
+<li>Remove file from package that was causing problems when installing on windows. (#102)</li>
+<li>Fix typos in Readme (Jason Davies).</li>
+</ul><h3>
+<a name="v106" class="anchor" href="#v106"><span class="mini-icon mini-icon-link"></span></a>v1.0.6</h3>
+
+<ul>
+<li>Do not default to the default to the field name for file uploads where
+filename="".</li>
+</ul><h3>
+<a name="v105" class="anchor" href="#v105"><span class="mini-icon mini-icon-link"></span></a>v1.0.5</h3>
+
+<ul>
+<li>Support filename="" in multipart parts</li>
+<li>Explain unexpected end() errors in parser better</li>
+</ul><p><strong>Note:</strong> Starting with this version, formidable emits 'file' events for empty
+file input fields. Previously those were incorrectly emitted as regular file
+input fields with value = "".</p>
+
+<h3>
+<a name="v104" class="anchor" href="#v104"><span class="mini-icon mini-icon-link"></span></a>v1.0.4</h3>
+
+<ul>
+<li>Detect a good default tmp directory regardless of platform. (#88)</li>
+</ul><h3>
+<a name="v103" class="anchor" href="#v103"><span class="mini-icon mini-icon-link"></span></a>v1.0.3</h3>
+
+<ul>
+<li>Fix problems with utf8 characters (#84) / semicolons in filenames (#58)</li>
+<li>Small performance improvements</li>
+<li>New test suite and fixture system</li>
+</ul><h3>
+<a name="v102" class="anchor" href="#v102"><span class="mini-icon mini-icon-link"></span></a>v1.0.2</h3>
+
+<ul>
+<li>Exclude node_modules folder from git</li>
+<li>Implement new <code>'aborted'</code> event</li>
+<li>Fix files in example folder to work with recent node versions</li>
+<li>Make gently a devDependency</li>
+</ul><p><a href="https://github.com/felixge/node-formidable/compare/v1.0.1...v1.0.2">See Commits</a></p>
+
+<h3>
+<a name="v101" class="anchor" href="#v101"><span class="mini-icon mini-icon-link"></span></a>v1.0.1</h3>
+
+<ul>
+<li>Fix package.json to refer to proper main directory. (#68, Dean Landolt)</li>
+</ul><p><a href="https://github.com/felixge/node-formidable/compare/v1.0.0...v1.0.1">See Commits</a></p>
+
+<h3>
+<a name="v100" class="anchor" href="#v100"><span class="mini-icon mini-icon-link"></span></a>v1.0.0</h3>
+
+<ul>
+<li>Add support for multipart boundaries that are quoted strings. (Jeff Craig)</li>
+</ul><p>This marks the beginning of development on version 2.0 which will include
+several architectural improvements.</p>
+
+<p><a href="https://github.com/felixge/node-formidable/compare/v0.9.11...v1.0.0">See Commits</a></p>
+
+<h3>
+<a name="v0911" class="anchor" href="#v0911"><span class="mini-icon mini-icon-link"></span></a>v0.9.11</h3>
+
+<ul>
+<li>Emit <code>'progress'</code> event when receiving data, regardless of parsing it. (Tim Koschützki)</li>
+<li>Use <a href="http://dev.w3.org/2006/webapi/FileAPI/">W3C FileAPI Draft</a> properties for File class</li>
+</ul><p><strong>Important:</strong> The old property names of the File class will be removed in a
+future release.</p>
+
+<p><a href="https://github.com/felixge/node-formidable/compare/v0.9.10...v0.9.11">See Commits</a></p>
+
+<h3>
+<a name="older-releases" class="anchor" href="#older-releases"><span class="mini-icon mini-icon-link"></span></a>Older releases</h3>
+
+<p>These releases were done before starting to maintain the above Changelog:</p>
+
+<ul>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.9.9...v0.9.10">v0.9.10</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.9.8...v0.9.9">v0.9.9</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.9.7...v0.9.8">v0.9.8</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.9.6...v0.9.7">v0.9.7</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.9.5...v0.9.6">v0.9.6</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.9.4...v0.9.5">v0.9.5</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.9.3...v0.9.4">v0.9.4</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.9.2...v0.9.3">v0.9.3</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.9.1...v0.9.2">v0.9.2</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.9.0...v0.9.1">v0.9.1</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.8.0...v0.9.0">v0.9.0</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.8.0...v0.9.0">v0.9.0</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.8.0...v0.9.0">v0.9.0</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.8.0...v0.9.0">v0.9.0</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.8.0...v0.9.0">v0.9.0</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.8.0...v0.9.0">v0.9.0</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.8.0...v0.9.0">v0.9.0</a></li>
+<li><a href="https://github.com/felixge/node-formidable/compare/v0.8.0...v0.9.0">v0.9.0</a></li>
+<li><a href="https://github.com/felixge/node-formidable/commits/v0.1.0">v0.1.0</a></li>
+</ul><h2>
+<a name="license" class="anchor" href="#license"><span class="mini-icon mini-icon-link"></span></a>License</h2>
+
+<p>Formidable is licensed under the MIT license.</p>
+
+<h2>
+<a name="ports" class="anchor" href="#ports"><span class="mini-icon mini-icon-link"></span></a>Ports</h2>
+
+<ul>
+<li>
+<a href="http://github.com/FooBarWidget/multipart-parser">multipart-parser</a>: a C++ parser based on formidable</li>
+</ul><h2>
+<a name="credits" class="anchor" href="#credits"><span class="mini-icon mini-icon-link"></span></a>Credits</h2>
+
+<ul>
+<li>
+<a href="http://twitter.com/ryah">Ryan Dahl</a> for his work on <a href="http://github.com/ry/http-parser">http-parser</a> which heavily inspired multipart_parser.js</li>
+</ul></article>
       </section>
     </div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">Node-formidable maintained by <a href="https://github.com/felixge">felixge</a></p>
+        <p class="copyright">Node-formidable maintained by <a href="https://github.com/felixge">felixge</a> and <a href="https://github.com/svnlto">svnlto</a></p>
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
 
-    
+
 
   </body>
 </html>
