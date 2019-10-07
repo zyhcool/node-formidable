@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="file" id="file" />
+    <input type="button" value="upload" />
+    <script>
+        let file;
+        document.querySelector("#file").addEventListener("change", (e) => {
+            file = e.target.files[0];
+            console.log(file)
+            const hash = new Date().getTime();
+            const name = file.name;
+            document.documentElement.addEventListener("click", () => {
+                const xhr = new XMLHttpRequest();
+                xhr.open("post", "http://localhost:3000/syncEvent?eventName=uploadFile");
+                let formdata = new FormData();
+                formdata.append("file", file);
+                formdata.append("hash", hash);
+                // xhr.setRequestHeader("Content-Type", "multipart/form-data");
+                xhr.send(formdata);
+
+                xhr.onreadystatechange = (e) => {
+                    if (xhr.status === 200 && xhr.readyState === 4) {
+                        console.log("success");
+                    }
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>
